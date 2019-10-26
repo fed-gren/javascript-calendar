@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   fs.readFile(
-    path.join(__dirname, '../public/html/index.html'),
+    path.join(__dirname, '../client/build/index.html'),
     (_, data) => {
       res.write(data);
       res.end();
