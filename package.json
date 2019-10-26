@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config ./client/config/webpack.config",
-    "start": "node app"
+    "start": "yarn build && node app"
   },
   "author": "gren",
   "license": "ISC",
@@ -19,8 +19,12 @@
     "@babel/core": "^7.6.4",
     "@babel/preset-env": "^7.6.3",
     "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9"
   }

@@ -1,3 +1,5 @@
+import '../css/style.scss';
+
 const a = 1;
 
 const fn = (...rest) => {
@@ -6,4 +8,4 @@ const fn = (...rest) => {
   }
 }
 
-fn(1,2,3,4,5);
+fn(1,2);
