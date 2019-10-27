@@ -1,5 +1,6 @@
 import { weekDay } from '../constant';
-import {getMonthStartDay} from '../util';
+import { getMonthStartDay, getMonthEndDay } from '../util';
+import { monthLastDate } from '../constant';
 
 export default class Calendar {
   constructor({ container, width, height }) {
@@ -9,20 +10,31 @@ export default class Calendar {
     this.setCalendarDate();
     this.init();
     this.initWeekDayBar();
+    this.initCellContainer();
   }
 
-  setCalendarDate() {
-    //오늘 날짜를 기반으로 현재 달력 데이터를 세팅한다.
-    //year, month, start day, dayCount
+  setCurDateInfo() {
     this.now = new Date(Date.now());
     this.curYear = this.now.getFullYear();
     this.curMonth = this.now.getMonth() + 1;
     this.curDate = this.now.getDate();
     this.curDayIdx = this.now.getDay();
+  }
+
+  setCalendarDate() {
+    //오늘 날짜를 기반으로 현재 달력 데이터를 세팅한다.
+    //year, month, start day, dayCount
+    this.setCurDateInfo();
     this.firstDateDayIdx = getMonthStartDay({
       todayDate: this.curDate,
       todayDayIdx: this.curDayIdx
     });
+    this.endDateDayIdx = getMonthEndDay({
+      month: this.curMonth,
+      todayDate: this.curDate,
+      todayDayIdx: this.curDayIdx
+    });
+
   }
 
   setCalendarEvent() {
@@ -68,5 +80,46 @@ export default class Calendar {
     }).forEach((weekDayElement) => {
       this.weekDayBar.insertAdjacentHTML('beforeend', weekDayElement);
     });
+  }
+
+  getPrevMonthCellHtml() {
+    if (this.firstDateDayIdx === 0) return;
+
+    const curMonthIdx = this.curMonth - 1;
+    const prevMonthEndDate = monthLastDate[curMonthIdx - 1];
+    const prevMonthStartDate = prevMonthEndDate - (this.firstDateDayIdx - 1);
+    let prevMonthCellHtml = ``;
+    let tempDate = prevMonthStartDate;
+
+    while (tempDate <= prevMonthEndDate) {
+      prevMonthCellHtml += `<div class='calendar-cell prev-month'><div class='calendar-cell header'>${tempDate}</div></div>`;
+      tempDate += 1;
+    }
+    return prevMonthCellHtml;
+  }
+
+  getCurMonthCellHtml() {
+    const curMonthIdx = this.curMonth - 1;
+    const curMonthEndDate = monthLastDate[curMonthIdx];
+    let curMonthCellHtml = ``;
+    let tempDate = 1;
+
+    while (tempDate <= curMonthEndDate) {
+      curMonthCellHtml += `<div class='calendar-cell cur-month'><div class='calendar-cell header'>${tempDate}</div></div>`;
+      tempDate += 1;
+    }
+    return curMonthCellHtml;
+  }
+
+  getNextMonthCellHtml() {
+
+  }
+
+  initCellContainer() {
+    const prevMonthCellHtml = this.getPrevMonthCellHtml();
+    const curMonthCellHtml = this.getCurMonthCellHtml();
+
+    this.cellContainer.insertAdjacentHTML('beforeend', prevMonthCellHtml);
+    this.cellContainer.insertAdjacentHTML('beforeend', curMonthCellHtml);
   }
 }
