@@ -1,4 +1,5 @@
 import { weekDay } from '../constant';
+import {getMonthStartDay} from '../util';
 
 export default class Calendar {
   constructor({ container, width, height }) {
@@ -13,9 +14,15 @@ export default class Calendar {
   setCalendarDate() {
     //오늘 날짜를 기반으로 현재 달력 데이터를 세팅한다.
     //year, month, start day, dayCount
-    this.curYear = 2019;
-    this.curMonth = 10;
-    this.curDay = 28;
+    this.now = new Date(Date.now());
+    this.curYear = this.now.getFullYear();
+    this.curMonth = this.now.getMonth() + 1;
+    this.curDate = this.now.getDate();
+    this.curDayIdx = this.now.getDay();
+    this.firstDateDayIdx = getMonthStartDay({
+      todayDate: this.curDate,
+      todayDayIdx: this.curDayIdx
+    });
   }
 
   setCalendarEvent() {
@@ -44,14 +51,14 @@ export default class Calendar {
   initHeader() {
     this.prevBtn = document.createElement('button');
     this.nextBtn = document.createElement('button');
-    this.yearText = document.createElement('p');
+    this.yearMonthText = document.createElement('p');
 
     this.prevBtn.innerText = 'prev';
-    this.yearText.innerText = this.curYear;
+    this.yearMonthText.innerText = `${this.curYear}년 ${this.curMonth}월`;
     this.nextBtn.innerText = 'next';
 
     this.header.appendChild(this.prevBtn);
-    this.header.appendChild(this.yearText);
+    this.header.appendChild(this.yearMonthText);
     this.header.appendChild(this.nextBtn);
   }
 
