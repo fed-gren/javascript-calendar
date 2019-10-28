@@ -100,12 +100,12 @@ export default class Calendar {
   }
 
   getPrevMonthCellHtml() {
-    if (this.firstDateDayIdx === 0) return;
+    let prevMonthCellHtml = ``;
+    if (this.firstDateDayIdx === 0) return prevMonthCellHtml;
 
     const curMonthIdx = this.curMonth - 1;
     const prevMonthEndDate = monthLastDate[curMonthIdx - 1];
     const prevMonthStartDate = prevMonthEndDate - (this.firstDateDayIdx - 1);
-    let prevMonthCellHtml = ``;
     let tempDate = prevMonthStartDate;
 
     while (tempDate <= prevMonthEndDate) {

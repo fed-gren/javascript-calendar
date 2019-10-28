@@ -3,11 +3,11 @@ export default ({
   todayDayIdx
 }) => {
   const gapFirstDate = todayDate - 1;
-  const WEEK_DAY_COUNT = 7;
-  const gapDayIndex = gapFirstDate % WEEK_DAY_COUNT;
+  const NUM_WEEK_DAY = 7;
+  const gapDayIndex = gapFirstDate % NUM_WEEK_DAY;
   const firstDayDateIdx = gapDayIndex >= todayDayIdx
-    ? todayDayIdx + WEEK_DAY_COUNT - gapDayIndex
+    ? todayDayIdx + NUM_WEEK_DAY - gapDayIndex
     : todayDayIdx - gapDayIndex;
 
-  return firstDayDateIdx;
+  return firstDayDateIdx % NUM_WEEK_DAY;
 };
