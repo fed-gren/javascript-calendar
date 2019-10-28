@@ -1,6 +1,7 @@
 import { weekDay } from '../constant';
 import { getMonthStartDay, getMonthEndDay } from '../util';
 import { monthLastDate } from '../constant';
+import CalendarCell from './CalendarCell';
 
 export default class Calendar {
   constructor({ container, width, height }) {
@@ -92,7 +93,8 @@ export default class Calendar {
     let tempDate = prevMonthStartDate;
 
     while (tempDate <= prevMonthEndDate) {
-      prevMonthCellHtml += `<div class='calendar-cell prev-month'><div class='calendar-cell header'>${tempDate}</div></div>`;
+      const calendarCell = new CalendarCell({ date: tempDate, eventList: [], isCurMonth: false });
+      prevMonthCellHtml += calendarCell.getCellHtml();
       tempDate += 1;
     }
     return prevMonthCellHtml;
@@ -105,7 +107,8 @@ export default class Calendar {
     let tempDate = 1;
 
     while (tempDate <= curMonthEndDate) {
-      curMonthCellHtml += `<div class='calendar-cell cur-month'><div class='calendar-cell header'>${tempDate}</div></div>`;
+      const calendarCell = new CalendarCell({ date: tempDate, eventList: [], isCurMonth: true });
+      curMonthCellHtml += calendarCell.getCellHtml();
       tempDate += 1;
     }
     return curMonthCellHtml;

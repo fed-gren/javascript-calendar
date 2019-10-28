@@ -1,0 +1,33 @@
+.calendar-cell {
+  border: 1px solid black;
+  padding: 0.2rem;
+  display: flex;
+  flex-direction: column;
+  color: rgb(150, 150, 150);
+  min-height: 8.4rem;
+
+  &.current-month {
+    color: black;
+  }
+
+  & > .calendar-cell-header {
+    border: 1px solid red;
+    display: flex;
+    padding: 0.2rem;
+    justify-content: flex-start;
+    align-items: center;
+    height: 1rem;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  & > .calendar-cell-contents {
+    border: 1px solid yellow;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 0.4rem;
+  }
+}
