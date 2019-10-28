@@ -10,19 +10,22 @@
     color: black;
   }
 
+  &.today {
+    background-color: rgb(221, 255, 216);
+  }
+
   & > .calendar-cell-header {
-    border: 1px solid red;
+    border-bottom: 1px solid gray;
     display: flex;
     padding: 0.2rem;
     justify-content: flex-start;
     align-items: center;
     height: 1rem;
     font-size: 1.4rem;
-    font-weight: bold;
+    font-weight: 200;
   }
 
   & > .calendar-cell-contents {
-    border: 1px solid yellow;
     flex: 1;
     display: flex;
     flex-direction: column;

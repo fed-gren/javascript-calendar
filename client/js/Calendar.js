@@ -8,24 +8,40 @@ export default class Calendar {
     this.container = container;
     this.container.style.width = width;
     this.container.style.height = height;
+    this.today = new Date(Date.now());
+    this.todayYear = this.today.getFullYear();
+    this.todayMonth = this.today.getMonth() + 1;
+    this.todayDate = this.today.getDate();
+    this.todayDayIdx = this.today.getDay();
+
+    this.setCurDateInfo({
+      curYear: this.todayYear,
+      curMonth: this.todayMonth,
+      curDate: this.todayDate,
+      curDayIdx: this.todayDayIdx
+    });
+
     this.setCalendarDate();
     this.init();
     this.initWeekDayBar();
     this.initCellContainer();
   }
 
-  setCurDateInfo() {
-    this.now = new Date(Date.now());
-    this.curYear = this.now.getFullYear();
-    this.curMonth = this.now.getMonth() + 1;
-    this.curDate = this.now.getDate();
-    this.curDayIdx = this.now.getDay();
+  setCurDateInfo({
+    curYear,
+    curMonth,
+    curDate,
+    curDayIdx
+  }) {
+    this.curYear = curYear;
+    this.curMonth = curMonth;
+    this.curDate = curDate;
+    this.curDayIdx = curDayIdx;
   }
 
   setCalendarDate() {
     //오늘 날짜를 기반으로 현재 달력 데이터를 세팅한다.
     //year, month, start day, dayCount
-    this.setCurDateInfo();
     this.firstDateDayIdx = getMonthStartDay({
       todayDate: this.curDate,
       todayDayIdx: this.curDayIdx
@@ -107,7 +123,13 @@ export default class Calendar {
     let tempDate = 1;
 
     while (tempDate <= curMonthEndDate) {
-      const calendarCell = new CalendarCell({ date: tempDate, eventList: [], isCurMonth: true });
+      const calendarCell = new CalendarCell({
+        date: tempDate,
+        eventList: [],
+        isCurMonth: true,
+        curYear: this.curYear,
+        curMonth: this.curMonth
+      });
       curMonthCellHtml += calendarCell.getCellHtml();
       tempDate += 1;
     }
@@ -115,14 +137,27 @@ export default class Calendar {
   }
 
   getNextMonthCellHtml() {
+    let nextMonthCellHtml = ``;
+    let tempDate = 1;
+    const WEEK_LAST_DAY_INDEX = 6;
+    const nextMonthEndDate = WEEK_LAST_DAY_INDEX - this.endDateDayIdx;
 
+    while (tempDate <= nextMonthEndDate) {
+      const calendarCell = new CalendarCell({ date: tempDate, eventList: [], isCurMonth: false });
+      nextMonthCellHtml += calendarCell.getCellHtml();
+      tempDate += 1;
+    }
+    return nextMonthCellHtml;
   }
 
   initCellContainer() {
+    this.cellContainer.innerHTML = '';
     const prevMonthCellHtml = this.getPrevMonthCellHtml();
     const curMonthCellHtml = this.getCurMonthCellHtml();
+    const nextMonthCellHtml = this.getNextMonthCellHtml();
 
     this.cellContainer.insertAdjacentHTML('beforeend', prevMonthCellHtml);
     this.cellContainer.insertAdjacentHTML('beforeend', curMonthCellHtml);
+    this.cellContainer.insertAdjacentHTML('beforeend', nextMonthCellHtml);
   }
 }
