@@ -21,7 +21,6 @@ export default class Calendar {
       curDayIdx: this.todayDayIdx
     });
 
-    this.setCalendarDate();
     this.init();
     this.initWeekDayBar();
     this.initCellContainer();
@@ -40,8 +39,6 @@ export default class Calendar {
   }
 
   setCalendarDate() {
-    //오늘 날짜를 기반으로 현재 달력 데이터를 세팅한다.
-    //year, month, start day, dayCount
     this.firstDateDayIdx = getMonthStartDay({
       todayDate: this.curDate,
       todayDayIdx: this.curDayIdx
@@ -51,7 +48,6 @@ export default class Calendar {
       todayDate: this.curDate,
       todayDayIdx: this.curDayIdx
     });
-
   }
 
   setCalendarEvent() {
@@ -78,6 +74,7 @@ export default class Calendar {
   }
 
   initHeader() {
+    this.header.innerHTML = '';
     this.prevBtn = document.createElement('button');
     this.nextBtn = document.createElement('button');
     this.yearMonthText = document.createElement('p');
@@ -89,26 +86,26 @@ export default class Calendar {
     this.header.appendChild(this.prevBtn);
     this.header.appendChild(this.yearMonthText);
     this.header.appendChild(this.nextBtn);
+
+    this.attachEvent();
   }
 
   initWeekDayBar() {
-    weekDay.map((weekDay) => {
-      return `<div class='week-day'>${weekDay}</div>`;
-    }).forEach((weekDayElement) => {
-      this.weekDayBar.insertAdjacentHTML('beforeend', weekDayElement);
-    });
+    weekDay
+      .map((weekDay) => `<div class='week-day'>${weekDay}</div>`)
+      .forEach((weekDayElement) => this.weekDayBar.insertAdjacentHTML('beforeend', weekDayElement));
   }
 
   getPrevMonthCellHtml() {
+    const curMonthIdx = this.curMonth - 1;
+    this.prevMonthEndDate = monthLastDate[curMonthIdx === 0 ? 11 : curMonthIdx - 1];
     let prevMonthCellHtml = ``;
     if (this.firstDateDayIdx === 0) return prevMonthCellHtml;
 
-    const curMonthIdx = this.curMonth - 1;
-    const prevMonthEndDate = monthLastDate[curMonthIdx - 1];
-    const prevMonthStartDate = prevMonthEndDate - (this.firstDateDayIdx - 1);
+    const prevMonthStartDate = this.prevMonthEndDate - (this.firstDateDayIdx - 1);
     let tempDate = prevMonthStartDate;
 
-    while (tempDate <= prevMonthEndDate) {
+    while (tempDate <= this.prevMonthEndDate) {
       const calendarCell = new CalendarCell({ date: tempDate, eventList: [], isCurMonth: false });
       prevMonthCellHtml += calendarCell.getCellHtml();
       tempDate += 1;
@@ -151,6 +148,7 @@ export default class Calendar {
   }
 
   initCellContainer() {
+    this.setCalendarDate();
     this.cellContainer.innerHTML = '';
     const prevMonthCellHtml = this.getPrevMonthCellHtml();
     const curMonthCellHtml = this.getCurMonthCellHtml();
@@ -159,5 +157,44 @@ export default class Calendar {
     this.cellContainer.insertAdjacentHTML('beforeend', prevMonthCellHtml);
     this.cellContainer.insertAdjacentHTML('beforeend', curMonthCellHtml);
     this.cellContainer.insertAdjacentHTML('beforeend', nextMonthCellHtml);
+  }
+
+  attachEvent() {
+    this.prevBtn.addEventListener('click', () => this.goPrevMonth());
+    this.nextBtn.addEventListener('click', () => this.goNextMonth());
+  }
+
+  goPrevMonth() {
+    const isFirstMonth = this.curMonth === 1;
+    const isFirstDay = this.firstDateDayIdx === 0;
+
+    const prevMonthDateInfo = {
+      curYear: isFirstMonth ? this.curYear - 1 : this.curYear,
+      curMonth: isFirstMonth ? 12 : this.curMonth - 1,
+      curDate: this.prevMonthEndDate,
+      curDayIdx: isFirstDay ? 6 : this.firstDateDayIdx - 1,
+    }
+    console.log(prevMonthDateInfo);
+
+    this.setCurDateInfo({...prevMonthDateInfo});
+    this.initHeader();
+    this.initCellContainer();
+  }
+
+  goNextMonth() {
+    const isLastMonth = this.curMonth === 12;
+    const isLastDay = this.endDateDayIdx === 6;
+
+    const nextMonthDateInfo = {
+      curYear: isLastMonth ? this.curYear + 1 : this.curYear,
+      curMonth: isLastMonth ? 1 : this.curMonth + 1,
+      curDate: 1,
+      curDayIdx: isLastDay ? 0 : this.endDateDayIdx + 1,
+    }
+    console.log(nextMonthDateInfo);
+
+    this.setCurDateInfo({ ...nextMonthDateInfo });
+    this.initHeader();
+    this.initCellContainer();
   }
 }
