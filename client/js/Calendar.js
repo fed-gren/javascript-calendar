@@ -1,6 +1,6 @@
 import { weekDay } from '../constant';
-import { getMonthStartDay, getMonthEndDay } from '../util';
-import { monthLastDate } from '../constant';
+import { getMonthStartDay, getMonthEndDay, getMonthEndDate } from '../util';
+
 import CalendarCell from './CalendarCell';
 
 export default class Calendar {
@@ -44,6 +44,7 @@ export default class Calendar {
       todayDayIdx: this.curDayIdx
     });
     this.endDateDayIdx = getMonthEndDay({
+      year: this.curYear,
       month: this.curMonth,
       todayDate: this.curDate,
       todayDayIdx: this.curDayIdx
@@ -97,8 +98,12 @@ export default class Calendar {
   }
 
   getPrevMonthCellHtml() {
-    const curMonthIdx = this.curMonth - 1;
-    this.prevMonthEndDate = monthLastDate[curMonthIdx === 0 ? 11 : curMonthIdx - 1];
+    this.prevMonthEndDate = getMonthEndDate({
+      year: this.curYear,
+      month: this.curMonth === 1
+        ? 12
+        : this.curMonth - 1
+    });
     let prevMonthCellHtml = ``;
     if (this.firstDateDayIdx === 0) return prevMonthCellHtml;
 
@@ -114,8 +119,10 @@ export default class Calendar {
   }
 
   getCurMonthCellHtml() {
-    const curMonthIdx = this.curMonth - 1;
-    const curMonthEndDate = monthLastDate[curMonthIdx];
+    const curMonthEndDate = getMonthEndDate({
+      year: this.curYear,
+      month: this.curMonth
+    });
     let curMonthCellHtml = ``;
     let tempDate = 1;
 

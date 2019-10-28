@@ -1,11 +1,12 @@
-import { monthLastDate } from '../constant';
+import { getMonthEndDate } from './index';
 
 export default ({
+  year,
   month,
   todayDate,
   todayDayIdx
 }) => {
-  const lastDate = monthLastDate[month - 1];
+  const lastDate = getMonthEndDate({ year, month });
   const WEEK_DAY_COUNT = 7;
   const gapWithEndDate = (lastDate - todayDate);
   const endDayDateIdx = (todayDayIdx + gapWithEndDate) % WEEK_DAY_COUNT;
