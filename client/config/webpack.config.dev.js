@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: path.resolve(__dirname, '../js/index.js'),
@@ -56,5 +57,8 @@ module.exports = {
       template: path.resolve(__dirname, '../public/index.html'),
       filename: 'index.html',
     }),
+    new webpack.EnvironmentPlugin({
+      EVENT_API_URL: 'http://localhost:3000/api'
+    })
   ],
 };

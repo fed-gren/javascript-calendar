@@ -4,15 +4,15 @@ import { getMonthStartDay, getMonthEndDay, getMonthEndDate } from '../util';
 import CalendarCell from './CalendarCell';
 
 export default class Calendar {
-  constructor({ container, width, height }) {
+  constructor({ container, width, eventApiUrl }) {
     this.container = container;
     this.container.style.width = width;
-    this.container.style.height = height;
     this.today = new Date(Date.now());
     this.todayYear = this.today.getFullYear();
     this.todayMonth = this.today.getMonth() + 1;
     this.todayDate = this.today.getDate();
     this.todayDayIdx = this.today.getDay();
+    this.eventApiUrl = eventApiUrl;
 
     this.setCurDateInfo({
       curYear: this.todayYear,
@@ -20,7 +20,7 @@ export default class Calendar {
       curDate: this.todayDate,
       curDayIdx: this.todayDayIdx
     });
-
+    this.setCalendarEvent();
     this.init();
     this.initWeekDayBar();
     this.initCellContainer();
@@ -53,7 +53,10 @@ export default class Calendar {
 
   setCalendarEvent() {
     //달력을 그리기 전, api에서 데이터를 받아와 저장해둔다.
-    //이 작업이 끝나야 초기 달력을 그릴 수 있도록 한다.
+    fetch(this.eventApiUrl)
+      .then((res) => {
+        console.log(res.json());
+      });
   }
 
   init() {
