@@ -1,10 +1,14 @@
 .calendar-cell {
-  border: 1px solid black;
   padding: 0.2rem;
   display: flex;
   flex-direction: column;
   color: rgb(150, 150, 150);
-  min-height: 8.4rem;
+  min-height: 6.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgb(245, 255, 156);
+  }
 
   &.current-month {
     color: black;

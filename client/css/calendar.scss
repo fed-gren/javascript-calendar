@@ -2,13 +2,14 @@
   display: flex;
   flex-direction: column;
   border: 1px solid gray;
+  margin-top: 2rem;
 }
 
 .calendar-header {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid royalblue;
+  padding: 0.5rem 0;
 
   & > * {
     margin: 0 1rem;
@@ -22,6 +23,7 @@
     padding: 0.4rem 1rem;
     cursor: pointer;
     font-size: 1rem;
+    margin: 0;
 
     &:active {
       background-color: rgb(238, 173, 32);
@@ -32,14 +34,13 @@
 .calendar-week-day-bar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  border: 1px solid orange;
-
+  gap: 0.2rem;
   & > .week-day {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    border: 1px solid gray;
-    background-color: rgb(141, 169, 245);
+    background-color: rgb(226, 226, 226);
+    padding: 0.2rem;
   }
 }
 
@@ -47,5 +48,5 @@
   flex: 1;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  border: 1px solid cornflowerblue;
+  gap: 0.2rem;
 }
