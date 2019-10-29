@@ -20,10 +20,7 @@ export default class Calendar {
       curDate: this.todayDate,
       curDayIdx: this.todayDayIdx
     });
-    this.setCalendarEvent();
     this.init();
-    this.initWeekDayBar();
-    this.initCellContainer();
   }
 
   setCurDateInfo({
@@ -51,30 +48,21 @@ export default class Calendar {
     });
   }
 
-  setCalendarEvent() {
-    //달력을 그리기 전, api에서 데이터를 받아와 저장해둔다.
-    fetch(this.eventApiUrl)
-      .then((res) => {
-        console.log(res.json());
-      });
+  convertEventListToObject(eventList) {
+    const eventObject = {};
+    eventList.forEach((eventData) => {
+      if (!eventObject[eventData.date]) eventObject[eventData.date] = [];
+      eventObject[eventData.date].push(eventData.event);
+    });
+    return eventObject;
   }
 
-  init() {
-    this.header = document.createElement('header');
-    this.header.style.height = '10%';
-    this.header.className = 'calendar-header';
-    this.container.appendChild(this.header);
-    this.initHeader();
-
-    this.weekDayBar = document.createElement('section');
-    this.weekDayBar.style.height = '5%';
-    this.weekDayBar.className = 'calendar-week-day-bar';
-    this.container.appendChild(this.weekDayBar);
-
-    this.cellContainer = document.createElement('section');
-    this.cellContainer.className = 'cell-container';
-    this.container.appendChild(this.cellContainer);
-
+  async fetchEventList() {
+    await fetch(this.eventApiUrl)
+      .then((res) => res.json())
+      .then((eventList) => {
+        this.eventObject = this.convertEventListToObject(eventList);
+      });
   }
 
   initHeader() {
@@ -100,33 +88,65 @@ export default class Calendar {
       .forEach((weekDayElement) => this.weekDayBar.insertAdjacentHTML('beforeend', weekDayElement));
   }
 
-  getPrevMonthCellHtml() {
+  initCellContainer() {
+    this.setCalendarDate();
+    this.cellContainer.innerHTML = '';
+
+    this.setPrevMonthCellHtml();
+    this.setCurMonthCellHtml();
+    this.setNextMonthCellHtml();
+  }
+
+  async init() {
+    this.header = document.createElement('header');
+    this.header.style.height = '10%';
+    this.header.className = 'calendar-header';
+    this.container.appendChild(this.header);
+    this.initHeader();
+
+    this.weekDayBar = document.createElement('section');
+    this.weekDayBar.style.height = '5%';
+    this.weekDayBar.className = 'calendar-week-day-bar';
+    this.container.appendChild(this.weekDayBar);
+    this.initWeekDayBar();
+
+    this.cellContainer = document.createElement('section');
+    this.cellContainer.className = 'cell-container';
+    this.container.appendChild(this.cellContainer);
+
+    try {
+      await this.fetchEventList();
+    } catch (error) {
+      console.log(error);
+    }
+
+    this.initCellContainer();
+  }
+
+  setPrevMonthCellHtml() {
     this.prevMonthEndDate = getMonthEndDate({
       year: this.curYear,
       month: this.curMonth === 1
         ? 12
         : this.curMonth - 1
     });
-    let prevMonthCellHtml = ``;
-    if (this.firstDateDayIdx === 0) return prevMonthCellHtml;
+    if (this.firstDateDayIdx === 0) return;
 
     const prevMonthStartDate = this.prevMonthEndDate - (this.firstDateDayIdx - 1);
     let tempDate = prevMonthStartDate;
 
     while (tempDate <= this.prevMonthEndDate) {
       const calendarCell = new CalendarCell({ date: tempDate, eventList: [], isCurMonth: false });
-      prevMonthCellHtml += calendarCell.getCellHtml();
+      this.cellContainer.appendChild(calendarCell.getCellElement());
       tempDate += 1;
     }
-    return prevMonthCellHtml;
   }
 
-  getCurMonthCellHtml() {
+  setCurMonthCellHtml() {
     const curMonthEndDate = getMonthEndDate({
       year: this.curYear,
       month: this.curMonth
     });
-    let curMonthCellHtml = ``;
     let tempDate = 1;
 
     while (tempDate <= curMonthEndDate) {
@@ -137,36 +157,25 @@ export default class Calendar {
         curYear: this.curYear,
         curMonth: this.curMonth
       });
-      curMonthCellHtml += calendarCell.getCellHtml();
+      const cellDate = calendarCell.getDate();
+      if(this.eventObject[cellDate]) {
+        calendarCell.setEventList(this.eventObject[cellDate]);
+      }
+      this.cellContainer.appendChild(calendarCell.getCellElement());
       tempDate += 1;
     }
-    return curMonthCellHtml;
   }
 
-  getNextMonthCellHtml() {
-    let nextMonthCellHtml = ``;
+  setNextMonthCellHtml() {
     let tempDate = 1;
     const WEEK_LAST_DAY_INDEX = 6;
     const nextMonthEndDate = WEEK_LAST_DAY_INDEX - this.endDateDayIdx;
 
     while (tempDate <= nextMonthEndDate) {
       const calendarCell = new CalendarCell({ date: tempDate, eventList: [], isCurMonth: false });
-      nextMonthCellHtml += calendarCell.getCellHtml();
+      this.cellContainer.appendChild(calendarCell.getCellElement());
       tempDate += 1;
     }
-    return nextMonthCellHtml;
-  }
-
-  initCellContainer() {
-    this.setCalendarDate();
-    this.cellContainer.innerHTML = '';
-    const prevMonthCellHtml = this.getPrevMonthCellHtml();
-    const curMonthCellHtml = this.getCurMonthCellHtml();
-    const nextMonthCellHtml = this.getNextMonthCellHtml();
-
-    this.cellContainer.insertAdjacentHTML('beforeend', prevMonthCellHtml);
-    this.cellContainer.insertAdjacentHTML('beforeend', curMonthCellHtml);
-    this.cellContainer.insertAdjacentHTML('beforeend', nextMonthCellHtml);
   }
 
   attachEvent() {
@@ -184,9 +193,8 @@ export default class Calendar {
       curDate: this.prevMonthEndDate,
       curDayIdx: isFirstDay ? 6 : this.firstDateDayIdx - 1,
     }
-    console.log(prevMonthDateInfo);
 
-    this.setCurDateInfo({...prevMonthDateInfo});
+    this.setCurDateInfo({ ...prevMonthDateInfo });
     this.initHeader();
     this.initCellContainer();
   }
@@ -201,7 +209,6 @@ export default class Calendar {
       curDate: 1,
       curDayIdx: isLastDay ? 0 : this.endDateDayIdx + 1,
     }
-    console.log(nextMonthDateInfo);
 
     this.setCurDateInfo({ ...nextMonthDateInfo });
     this.initHeader();
