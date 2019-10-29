@@ -48,14 +48,20 @@ export default class CalendarCell {
   }
 
   getDate() {
-    const curDate = String(this.date).length === 1 ? `0${this.date}` : this.date;
-    return `${this.curYear}-${this.curMonth}-${curDate}`;
+    const curMonth = String(this.curMonth).length === 1
+      ? `0${this.curMonth}`
+      : this.curMonth;
+    const curDate = String(this.date).length === 1
+      ? `0${this.date}`
+      : this.date;
+
+    return `${this.curYear}-${curMonth}-${curDate}`;
   }
 
   setEventList(eventList) {
     const eventListHtml = eventList.reduce((acc, event) =>
-      acc + `<p cell-event>${event}</p>`
-    , ``);
+      acc + `<p class=cell-event>${event}</p>`
+      , ``);
     this.cellContentsElement.innerHTML = (eventListHtml);
   }
 }

@@ -21,6 +21,7 @@ export default class Calendar {
       curDayIdx: this.todayDayIdx
     });
     this.init();
+    this.attachEvent();
   }
 
   setCurDateInfo({
@@ -72,14 +73,16 @@ export default class Calendar {
     this.yearMonthText = document.createElement('p');
 
     this.prevBtn.innerText = 'prev';
-    this.yearMonthText.innerText = `${this.curYear}년 ${this.curMonth}월`;
+    this.updateHeader();
     this.nextBtn.innerText = 'next';
 
     this.header.appendChild(this.prevBtn);
     this.header.appendChild(this.yearMonthText);
     this.header.appendChild(this.nextBtn);
+  }
 
-    this.attachEvent();
+  updateHeader() {
+    this.yearMonthText.innerText = `${this.curYear}년 ${this.curMonth}월`;
   }
 
   initWeekDayBar() {
@@ -88,9 +91,10 @@ export default class Calendar {
       .forEach((weekDayElement) => this.weekDayBar.insertAdjacentHTML('beforeend', weekDayElement));
   }
 
-  initCellContainer() {
+  updateCellContainer() {
     this.setCalendarDate();
     this.cellContainer.innerHTML = '';
+    this.currentCellObject = {};
 
     this.setPrevMonthCellHtml();
     this.setCurMonthCellHtml();
@@ -120,7 +124,7 @@ export default class Calendar {
       console.log(error);
     }
 
-    this.initCellContainer();
+    this.updateCellContainer();
   }
 
   setPrevMonthCellHtml() {
@@ -134,9 +138,23 @@ export default class Calendar {
 
     const prevMonthStartDate = this.prevMonthEndDate - (this.firstDateDayIdx - 1);
     let tempDate = prevMonthStartDate;
+    const { curMonth: prevMonth, curYear: prevYear } = this.getPrevMonthDateObj();
 
     while (tempDate <= this.prevMonthEndDate) {
-      const calendarCell = new CalendarCell({ date: tempDate, eventList: [], isCurMonth: false });
+      const calendarCell = new CalendarCell({
+        date: tempDate,
+        eventList: [],
+        isCurMonth: false,
+        curYear: prevYear,
+        curMonth: prevMonth
+      });
+
+      const cellDate = calendarCell.getDate();
+      if (this.eventObject[cellDate]) {
+        this.currentCellObject[cellDate] = [...this.eventObject[cellDate]];
+        calendarCell.setEventList(this.eventObject[cellDate]);
+      }
+
       this.cellContainer.appendChild(calendarCell.getCellElement());
       tempDate += 1;
     }
@@ -157,10 +175,13 @@ export default class Calendar {
         curYear: this.curYear,
         curMonth: this.curMonth
       });
+
       const cellDate = calendarCell.getDate();
-      if(this.eventObject[cellDate]) {
+      if (this.eventObject[cellDate]) {
+        this.currentCellObject[cellDate] = [...this.eventObject[cellDate]];
         calendarCell.setEventList(this.eventObject[cellDate]);
       }
+
       this.cellContainer.appendChild(calendarCell.getCellElement());
       tempDate += 1;
     }
@@ -170,48 +191,82 @@ export default class Calendar {
     let tempDate = 1;
     const WEEK_LAST_DAY_INDEX = 6;
     const nextMonthEndDate = WEEK_LAST_DAY_INDEX - this.endDateDayIdx;
+    const { curMonth, curYear } = this.getNextMonthDateObj();
 
     while (tempDate <= nextMonthEndDate) {
-      const calendarCell = new CalendarCell({ date: tempDate, eventList: [], isCurMonth: false });
+      const calendarCell = new CalendarCell({
+        date: tempDate,
+        eventList: [],
+        isCurMonth: false,
+        curMonth,
+        curYear
+      });
+
+      const cellDate = calendarCell.getDate();
+      if (this.eventObject[cellDate]) {
+        this.currentCellObject[cellDate] = [...this.eventObject[cellDate]];
+        calendarCell.setEventList(this.eventObject[cellDate]);
+      }
+
       this.cellContainer.appendChild(calendarCell.getCellElement());
       tempDate += 1;
     }
   }
 
-  attachEvent() {
-    this.prevBtn.addEventListener('click', () => this.goPrevMonth());
-    this.nextBtn.addEventListener('click', () => this.goNextMonth());
-  }
-
-  goPrevMonth() {
+  getPrevMonthDateObj() {
     const isFirstMonth = this.curMonth === 1;
     const isFirstDay = this.firstDateDayIdx === 0;
 
-    const prevMonthDateInfo = {
+    return {
       curYear: isFirstMonth ? this.curYear - 1 : this.curYear,
       curMonth: isFirstMonth ? 12 : this.curMonth - 1,
       curDate: this.prevMonthEndDate,
       curDayIdx: isFirstDay ? 6 : this.firstDateDayIdx - 1,
     }
-
-    this.setCurDateInfo({ ...prevMonthDateInfo });
-    this.initHeader();
-    this.initCellContainer();
   }
 
-  goNextMonth() {
+  goPrevMonth() {
+    const prevMonthDateInfo = this.getPrevMonthDateObj();
+
+    this.setCurDateInfo({ ...prevMonthDateInfo });
+    this.updateHeader();
+    this.updateCellContainer();
+  }
+
+  getNextMonthDateObj() {
     const isLastMonth = this.curMonth === 12;
     const isLastDay = this.endDateDayIdx === 6;
 
-    const nextMonthDateInfo = {
+    return {
       curYear: isLastMonth ? this.curYear + 1 : this.curYear,
       curMonth: isLastMonth ? 1 : this.curMonth + 1,
       curDate: 1,
       curDayIdx: isLastDay ? 0 : this.endDateDayIdx + 1,
     }
+  }
+
+  goNextMonth() {
+    const nextMonthDateInfo = this.getNextMonthDateObj();
 
     this.setCurDateInfo({ ...nextMonthDateInfo });
-    this.initHeader();
-    this.initCellContainer();
+    this.updateHeader();
+    this.updateCellContainer();
+  }
+
+  alertEventList({ target }) {
+    const cellElement = target.closest('.calendar-cell');
+    if (!cellElement) return;
+
+    const eventList = [...cellElement.querySelectorAll('.cell-event')];
+    if (eventList.length === 0) return;
+
+    const eventListText = eventList.reduce((acc, cur) => acc + `${cur.innerText}\n`, ``);
+    alert(eventListText);
+  }
+
+  attachEvent() {
+    this.prevBtn.addEventListener('click', () => this.goPrevMonth());
+    this.nextBtn.addEventListener('click', () => this.goNextMonth());
+    this.cellContainer.addEventListener('click', (evt) => this.alertEventList(evt), true);
   }
 }
