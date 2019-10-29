@@ -27,18 +27,35 @@ export default class CalendarCell {
   }
 
   init() {
-    this.cellHtml = `
-    <div class='calendar-cell
-      ${this.isCurMonth ? 'current-month' : ''}
-      ${this.isTodayCell() ? 'today' : ''}'
-    >
-      <section class='calendar-cell-header'>${this.date}</section>
-      <section class='calendar-cell-contents'></section>
-    </div>
-    `;
+    this.cellElement = document.createElement('div');
+    this.cellElement.classList.add('calendar-cell');
+    this.cellElement.classList.add(`${this.isCurMonth ? 'current-month' : 'not-current-month'}`);
+    this.cellElement.classList.add(`${this.isTodayCell() ? 'today' : 'not-today'}`);
+
+    this.cellHeaderElement = document.createElement('section');
+    this.cellHeaderElement.classList.add('calendar-cell-header');
+    this.cellHeaderElement.innerText = `${this.date}`;
+
+    this.cellContentsElement = document.createElement('section');
+    this.cellContentsElement.classList.add('calendar-cell-contents');
+
+    this.cellElement.appendChild(this.cellHeaderElement);
+    this.cellElement.appendChild(this.cellContentsElement);
   }
 
-  getCellHtml() {
-    return this.cellHtml;
+  getCellElement() {
+    return this.cellElement;
+  }
+
+  getDate() {
+    const curDate = String(this.date).length === 1 ? `0${this.date}` : this.date;
+    return `${this.curYear}-${this.curMonth}-${curDate}`;
+  }
+
+  setEventList(eventList) {
+    const eventListHtml = eventList.reduce((acc, event) =>
+      acc + `<p cell-event>${event}</p>`
+    , ``);
+    this.cellContentsElement.innerHTML = (eventListHtml);
   }
 }
