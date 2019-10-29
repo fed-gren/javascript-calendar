@@ -1,5 +1,10 @@
 # Javascript-Calendar
 
+## Deploy
+
+- Heroku
+- https://gren-javascript-calendar.herokuapp.com/
+
 ## Tech stack
 
 - HTML
