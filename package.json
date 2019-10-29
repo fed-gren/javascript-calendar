@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config ./client/config/webpack.config.prod",
     "start:dev": "webpack-dev-server --config ./client/config/webpack.config.dev",
-    "start": "yarn build && node app"
+    "start": "yarn build && node app",
+    "heroku-prebuild": "yarn add --dev"
   },
   "author": "gren",
   "license": "ISC",
