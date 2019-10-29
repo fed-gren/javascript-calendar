@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
   )
 });
 
-router.get('/api/', cors({origin: 'http://localhost:8080'}), (req, res) => {
+router.get('/api/', cors({ origin: 'https://gren-javascript-calendar.herokuapp.com'}), (req, res) => {
   fs.readFile(path.join(__dirname, '../api/data.json'),
     (_, data) => {
       res.write(data);
