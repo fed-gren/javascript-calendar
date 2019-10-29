@@ -55,7 +55,7 @@ module.exports = {
       filename: 'index.html',
     }),
     new webpack.EnvironmentPlugin({
-      EVENT_API_URL: 'http://localhost:3000/api'
+      EVENT_API_URL: 'https://gren-javascript-calendar.herokuapp.com/api'
     })
   ],
 };
