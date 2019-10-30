@@ -1,5 +1,5 @@
 import { weekDay } from '../constant';
-import { getMonthStartDay, getMonthEndDay, getMonthEndDate } from '../util';
+import { getMonthStartDay, getMonthEndDay, getMonthEndDate, removeAllChildNode } from '../util';
 
 import CalendarCell from './CalendarCell';
 
@@ -67,7 +67,6 @@ export default class Calendar {
   }
 
   initHeader() {
-    this.header.innerHTML = '';
     this.prevBtn = document.createElement('button');
     this.nextBtn = document.createElement('button');
     this.yearMonthText = document.createElement('p');
@@ -93,7 +92,7 @@ export default class Calendar {
 
   updateCellContainer() {
     this.setCalendarDate();
-    this.cellContainer.innerHTML = '';
+    removeAllChildNode(this.cellContainer);
     this.currentCellObject = {};
 
     this.setPrevMonthCellHtml();
