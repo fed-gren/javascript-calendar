@@ -1,4 +1,4 @@
-import { weekDay, styles, classNames } from '../constant';
+import { weekDay, styles, classNames, dateConstants } from '../constant';
 import { getMonthStartDay, getMonthEndDay, getMonthEndDate, removeAllChildNode } from '../util';
 
 import CalendarCell from './CalendarCell';
@@ -129,11 +129,11 @@ export default class Calendar {
   setPrevMonthCellHtml() {
     this.prevMonthEndDate = getMonthEndDate({
       year: this.curYear,
-      month: this.curMonth === 1
-        ? 12
+      month: this.curMonth === dateConstants.firstMonth
+        ? dateConstants.lastMonth
         : this.curMonth - 1
     });
-    if (this.firstDateDayIdx === 0) return;
+    if (this.firstDateDayIdx === dateConstants.firstWeekIdx) return;
 
     const prevMonthStartDate = this.prevMonthEndDate - (this.firstDateDayIdx - 1);
     let tempDate = prevMonthStartDate;
@@ -188,8 +188,7 @@ export default class Calendar {
 
   setNextMonthCellHtml() {
     let tempDate = 1;
-    const WEEK_LAST_DAY_INDEX = 6;
-    const nextMonthEndDate = WEEK_LAST_DAY_INDEX - this.endDateDayIdx;
+    const nextMonthEndDate = dateConstants.lastWeekIdx - this.endDateDayIdx;
     const { curMonth, curYear } = this.getNextMonthDateObj();
 
     while (tempDate <= nextMonthEndDate) {
@@ -213,14 +212,20 @@ export default class Calendar {
   }
 
   getPrevMonthDateObj() {
-    const isFirstMonth = this.curMonth === 1;
-    const isFirstDay = this.firstDateDayIdx === 0;
+    const isFirstMonth = this.curMonth === dateConstants.firstMonth;
+    const isFirstDay = this.firstDateDayIdx === dateConstants.firstWeekIdx;
 
     return {
-      curYear: isFirstMonth ? this.curYear - 1 : this.curYear,
-      curMonth: isFirstMonth ? 12 : this.curMonth - 1,
+      curYear: isFirstMonth
+        ? this.curYear - 1
+        : this.curYear,
+      curMonth: isFirstMonth
+        ? dateConstants.lastMonth
+        : this.curMonth - 1,
       curDate: this.prevMonthEndDate,
-      curDayIdx: isFirstDay ? 6 : this.firstDateDayIdx - 1,
+      curDayIdx: isFirstDay
+        ? dateConstants.lastWeekIdx
+        : this.firstDateDayIdx - 1,
     }
   }
 
@@ -233,14 +238,14 @@ export default class Calendar {
   }
 
   getNextMonthDateObj() {
-    const isLastMonth = this.curMonth === 12;
-    const isLastDay = this.endDateDayIdx === 6;
+    const isLastMonth = this.curMonth === dateConstants.lastMonth;
+    const isLastDay = this.endDateDayIdx === dateConstants.lastWeekIdx;
 
     return {
       curYear: isLastMonth ? this.curYear + 1 : this.curYear,
-      curMonth: isLastMonth ? 1 : this.curMonth + 1,
+      curMonth: isLastMonth ? dateConstants.firstMonth : this.curMonth + 1,
       curDate: 1,
-      curDayIdx: isLastDay ? 0 : this.endDateDayIdx + 1,
+      curDayIdx: isLastDay ? dateConstants.firstWeekIdx : this.endDateDayIdx + 1,
     }
   }
 
