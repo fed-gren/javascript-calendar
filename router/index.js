@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const cors = require('cors');
 
 const router = express.Router();
 
@@ -15,7 +14,12 @@ router.get('/', (req, res) => {
   )
 });
 
-router.get('/api/', cors({ origin: 'https://gren-javascript-calendar.herokuapp.com'}), (req, res) => {
+router.get('/api/', (req, res) => {
+  const allowedOrigins = ['http://localhost:8080', 'https://gren-javascript-calendar.herokuapp.com'];
+  const origin = req.headers.origin;
+  if(allowedOrigins.indexOf(origin) > -1) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   fs.readFile(path.join(__dirname, '../api/data.json'),
     (_, data) => {
       res.write(data);
