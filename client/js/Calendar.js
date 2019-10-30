@@ -1,4 +1,4 @@
-import { weekDay } from '../constant';
+import { weekDay, styles, classNames } from '../constant';
 import { getMonthStartDay, getMonthEndDay, getMonthEndDate, removeAllChildNode } from '../util';
 
 import CalendarCell from './CalendarCell';
@@ -86,7 +86,7 @@ export default class Calendar {
 
   initWeekDayBar() {
     weekDay
-      .map((weekDay) => `<div class='week-day'>${weekDay}</div>`)
+      .map((weekDay) => `<div class=${classNames.weekDay.day}>${weekDay}</div>`)
       .forEach((weekDayElement) => this.weekDayBar.insertAdjacentHTML('beforeend', weekDayElement));
   }
 
@@ -102,19 +102,19 @@ export default class Calendar {
 
   async init() {
     this.header = document.createElement('header');
-    this.header.style.height = '10%';
-    this.header.className = 'calendar-header';
+    this.header.style.height = styles.header.height;
+    this.header.className = classNames.header;
     this.container.appendChild(this.header);
     this.initHeader();
 
     this.weekDayBar = document.createElement('section');
-    this.weekDayBar.style.height = '5%';
-    this.weekDayBar.className = 'calendar-week-day-bar';
+    this.weekDayBar.style.height = styles.weekDayBar.height;
+    this.weekDayBar.className = classNames.weekDay.bar;
     this.container.appendChild(this.weekDayBar);
     this.initWeekDayBar();
 
     this.cellContainer = document.createElement('section');
-    this.cellContainer.className = 'cell-container';
+    this.cellContainer.className = classNames.cell.container;
     this.container.appendChild(this.cellContainer);
 
     try {

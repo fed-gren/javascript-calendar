@@ -1,3 +1,5 @@
+import { classNames } from '../constant';
+
 export default class CalendarCell {
   constructor({
     date,
@@ -28,16 +30,24 @@ export default class CalendarCell {
 
   init() {
     this.cellElement = document.createElement('div');
-    this.cellElement.classList.add('calendar-cell');
-    this.cellElement.classList.add(`${this.isCurMonth ? 'current-month' : 'not-current-month'}`);
-    this.cellElement.classList.add(`${this.isTodayCell() ? 'today' : 'not-today'}`);
+    this.cellElement.classList.add(classNames.cell.element);
+    this.cellElement.classList.add(
+      `${this.isCurMonth
+        ? classNames.cell.currentMonth
+        : classNames.cell.notCurrentMonth}`
+    );
+    this.cellElement.classList.add(
+      `${this.isTodayCell()
+        ? classNames.cell.today
+        : classNames.cell.notToday}`
+    );
 
     this.cellHeaderElement = document.createElement('section');
-    this.cellHeaderElement.classList.add('calendar-cell-header');
+    this.cellHeaderElement.classList.add(classNames.cell.header);
     this.cellHeaderElement.innerText = `${this.date}`;
 
     this.cellContentsElement = document.createElement('section');
-    this.cellContentsElement.classList.add('calendar-cell-contents');
+    this.cellContentsElement.classList.add(classNames.cell.contents);
 
     this.cellElement.appendChild(this.cellHeaderElement);
     this.cellElement.appendChild(this.cellContentsElement);
@@ -60,7 +70,7 @@ export default class CalendarCell {
 
   setEventList(eventList) {
     const eventListHtml = eventList.reduce((acc, event) =>
-      acc + `<p class=cell-event>${event}</p>`
+      acc + `<p class=${classNames.cell.event}>${event}</p>`
       , ``);
     this.cellContentsElement.innerHTML = (eventListHtml);
   }
