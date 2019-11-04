@@ -35,7 +35,7 @@ yarn start:dev # running webpack dev server on port 8080
 
 #### 4. 데모
 
-http://localhost:8080으로 접속하면 페이지 확인 가능합니다.
+`http://localhost:8080`으로 접속하면 페이지 확인 가능합니다.
 
 
 
