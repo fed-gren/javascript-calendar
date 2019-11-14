@@ -3,7 +3,7 @@ const path = require('path');
 const router = require('./router/index');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use('/', router);
